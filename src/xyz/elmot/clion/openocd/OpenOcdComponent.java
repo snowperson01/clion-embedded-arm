@@ -199,6 +199,9 @@ public class OpenOcdComponent {
                 if (!isDone()) {
                     set(STATUS.FLASH_ERROR);
                 }
+                else{
+                    set(STATUS.FLASH_SUCCESS);
+                }
             } catch (Exception e) {
                 set(STATUS.FLASH_ERROR);
             }

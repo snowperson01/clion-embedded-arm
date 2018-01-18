@@ -167,15 +167,17 @@ class OpenOcdLauncher extends CidrLauncher {
             ThrowableComputable<OpenOcdComponent.STATUS, ExecutionException> process = () -> {
                 try {
                     ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-                    return downloadResult.get(10, TimeUnit.MINUTES);
+                    return downloadResult.get(100, TimeUnit.MINUTES);
                 } catch (InterruptedException | TimeoutException | java.util.concurrent.ExecutionException e) {
                     throw new ExecutionException(e);
                 }
             };
-            if (ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                    process, "Firmware Download", true, getProject()) != OpenOcdComponent.STATUS.FLASH_SUCCESS) {
-                downloadResult.cancel(true);
-                throw new ExecutionException("OpenOCD cancelled");
+            OpenOcdComponent.STATUS firmware_download = ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                    process, "Firmware Download", true, getProject());
+            if (firmware_download != OpenOcdComponent.STATUS.FLASH_SUCCESS) {
+//                downloadResult.cancel(true);
+//                throw new ExecutionException("OpenOCD cancelled");
+                System.err.println("firmware_download:" + firmware_download);
             }
             return super.startDebugProcess(commandLineState, xDebugSession);
         } catch (ConfigurationException e) {
